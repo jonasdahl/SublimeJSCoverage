@@ -6,6 +6,8 @@ import fnmatch
 import sublime
 import sublime_plugin
 
+ST3 = int(sublime.version()) >= 3000
+
 debug = lambda *args: sys.stdout.write("\n%s" % " ".join(map(str, args)))
 
 REGION_KEY_COVERED = 'SublimeJSCoverageCovered'
@@ -138,13 +140,14 @@ class ShowJsCoverageCommand(sublime_plugin.TextCommand):
             else:
                 badOutlines.append(region)
 
+        flags = sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE if ST3 else sublime.HIDDEN
         if goodOutlines:
             view.add_regions(REGION_KEY_COVERED, goodOutlines,
-                'markup.inserted.diff', 'dot', sublime.HIDDEN)
+                'markup.inserted.diff', 'dot', flags)
 
         if badOutlines:
             view.add_regions(REGION_KEY_UNCOVERED, badOutlines,
-                'markup.deleted.diff', 'dot', sublime.HIDDEN)
+                'markup.deleted.diff', 'dot', flags)
 
 class ClearJsCoverageCommand(sublime_plugin.TextCommand):
 
